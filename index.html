@@ -1,26 +1,32 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 
 
-<title>MALDI-TOF Illustrated Guide</title>
+<title>MALDI-TOF Guide</title>
 <meta name="claude:viewport-fit-sides" content="cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="MALDI-TOF Guide">
+<meta name="theme-color" content="#2f6e6e">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* ---------------------------------------------------------------
    Design plan
-   Layout: lab-notebook reading page. A slim title band, then a
-   sticky horizontal strip of 19 topic tabs (scrolls sideways on
-   its own; the page body never scrolls sideways), then a single
-   reading-width column per topic below. Figures sit in bordered
-   "instrument card" boxes; data tables and code get their own
-   horizontally-scrolling strips so nothing pushes the page wide.
-   Color: cool slate ink on a pale lab-bench background, with a
-   teal/rust accent pair lifted straight from the guide's own
-   diagrams, so the figures and the page read as one system.
-   Type: IBM Plex Serif for headings (technical-document feel),
-   IBM Plex Sans for reading text, IBM Plex Mono for formulas,
-   m/z values and code.
+   Layout: a two-screen app shell, not a page. A grouped "library"
+   list (the 19 chapters sorted into the guide's five real stages)
+   opens to a full-screen "reader" with a large page-turn feel:
+   sticky chapter header, swipe or arrow buttons between chapters,
+   a floating pill back to the library. Built to read as something
+   installed, not browsed: a persistent top bar, inset grouped rows,
+   safe-area padding on every edge.
+   Color: the same teal/slate/rust system as the companion study
+   guide, so the two feel like one product.
+   Type: IBM Plex Serif for the big title and chapter headings,
+   IBM Plex Sans for list rows and body text, IBM Plex Mono for
+   figures, formulas and the chapter counter.
    ----------------------------------------------------------------*/
 :root{
   --bg:#f2f6f5;
@@ -36,115 +42,135 @@
   --code-bg:#1f2a2d;
   --code-ink:#dfe8e6;
   --on-accent:#ffffff;
+  --shadow: 0 1px 2px rgba(35,48,53,.06), 0 6px 20px rgba(35,48,53,.06);
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#121a1b;
-    --surface:#1a2425;
-    --surface-2:#223130;
-    --ink:#e8efed;
-    --muted:#a6b8b6;
-    --accent:#7fc3c0;
-    --accent-ink:#bfe6e4;
-    --accent2:#e2905f;
-    --border:#2d4140;
-    --focus:#7fc3c0;
-    --code-bg:#0f1617;
-    --code-ink:#dfe8e6;
-    --on-accent:#0c1414;
+    --bg:#121a1b; --surface:#1a2425; --surface-2:#223130; --ink:#e8efed;
+    --muted:#a6b8b6; --accent:#7fc3c0; --accent-ink:#bfe6e4; --accent2:#e2905f;
+    --border:#2d4140; --focus:#7fc3c0; --code-bg:#0f1617; --code-ink:#dfe8e6;
+    --on-accent:#0c1414; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.35);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#121a1b;
-  --surface:#1a2425;
-  --surface-2:#223130;
-  --ink:#e8efed;
-  --muted:#a6b8b6;
-  --accent:#7fc3c0;
-  --accent-ink:#bfe6e4;
-  --accent2:#e2905f;
-  --border:#2d4140;
-  --focus:#7fc3c0;
-  --code-bg:#0f1617;
-  --code-ink:#dfe8e6;
-  --on-accent:#0c1414;
+  --bg:#121a1b; --surface:#1a2425; --surface-2:#223130; --ink:#e8efed;
+  --muted:#a6b8b6; --accent:#7fc3c0; --accent-ink:#bfe6e4; --accent2:#e2905f;
+  --border:#2d4140; --focus:#7fc3c0; --code-bg:#0f1617; --code-ink:#dfe8e6;
+  --on-accent:#0c1414; --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.35);
   color-scheme: dark;
 }
 
 *{box-sizing:border-box}
+html,body{height:100%}
 body{
-  margin:0;
-  background:var(--bg);
-  color:var(--ink);
+  margin:0; background:var(--bg); color:var(--ink);
   font-family:'IBM Plex Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-size:16px;
-  line-height:1.55;
-  padding-left:max(16px, env(safe-area-inset-left, 0px));
-  padding-right:max(16px, env(safe-area-inset-right, 0px));
+  font-size:16px; line-height:1.5; overflow-x:hidden;
 }
 h1,h2,h3{font-family:'IBM Plex Serif', Georgia, serif; text-wrap:balance; color:var(--ink)}
 a{color:var(--accent-ink)}
+button{font:inherit; color:inherit}
 a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible{
   outline:2px solid var(--focus); outline-offset:2px;
 }
-.sr-only{
-  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
-  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+[hidden]{display:none!important}
+
+/* status-bar scrim so content never shows through under the notch */
+body::before{
+  content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top, 0px);
+  z-index:20; background:var(--surface);
 }
 
-/* ---- masthead ---- */
-.masthead{
-  max-width:720px; margin:0 auto; padding:28px 0 16px;
+/* ================= LIBRARY VIEW ================= */
+#view-library{
+  min-height:100%;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
 }
-.masthead .kicker{
-  font-family:'IBM Plex Mono', monospace; font-size:12.5px; letter-spacing:.08em;
-  text-transform:uppercase; color:var(--accent2); margin:0 0 6px;
+.libtop{
+  padding-top:calc(env(safe-area-inset-top, 0px) + 18px);
+  padding-bottom:8px;
 }
-.masthead h1{
-  font-size:clamp(26px,5vw,34px); margin:0 0 6px; font-weight:700; line-height:1.15;
+.libtop .kicker{
+  font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--accent2); margin:0 0 4px;
 }
-.masthead p{color:var(--muted); margin:0; max-width:60ch}
+.libtop h1{font-size:clamp(28px,7vw,36px); margin:0; font-weight:700}
+.libtop p{color:var(--muted); margin:8px 0 0; max-width:60ch; font-size:14.5px}
 
-/* ---- tab bar ---- */
-.tabbar-wrap{
-  position:sticky; top:0; z-index:5;
-  background:var(--bg);
-  border-bottom:1px solid var(--border);
+.install-tip{
+  margin:16px 0 4px; padding:12px 14px; border-radius:12px;
+  background:var(--surface-2); border:1px solid var(--border);
+  display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--muted);
 }
-.tabbar{
-  max-width:880px; margin:0 auto;
-  display:flex; gap:6px;
-  overflow-x:auto; overflow-y:hidden;
-  padding:10px 0 10px;
-  scrollbar-width:thin;
-}
-.tabbar::-webkit-scrollbar{height:6px}
-.tabbar::-webkit-scrollbar-thumb{background:var(--border); border-radius:4px}
-.tab{
-  flex:0 0 auto;
-  font-family:'IBM Plex Sans', sans-serif;
-  font-size:13.5px; font-weight:500;
-  color:var(--muted);
-  background:var(--surface-2);
-  border:1px solid var(--border);
-  border-radius:999px;
-  padding:7px 14px;
-  cursor:pointer;
-  white-space:nowrap;
-}
-.tab:hover{color:var(--ink)}
-.tab[aria-selected="true"]{
-  background:var(--accent); color:var(--on-accent); border-color:var(--accent);
-  font-weight:600;
+.install-tip strong{color:var(--ink)}
+.install-tip button{
+  margin-left:auto; flex:0 0 auto; background:none; border:none; color:var(--accent-ink);
+  font-weight:600; cursor:pointer; padding:4px 6px;
 }
 
-/* ---- main content ---- */
-main{max-width:720px; margin:0 auto; padding:28px 0 80px}
-.panel-title{font-size:clamp(22px,4.5vw,30px); margin:0 0 18px}
-.panel h2{font-size:19px; margin:34px 0 12px; padding-top:4px; border-top:1px solid var(--border)}
-.panel h2:first-of-type{border-top:none; margin-top:8px}
+.group-label{
+  font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--muted); margin:26px 2px 8px;
+}
+.group{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  overflow:hidden; box-shadow:var(--shadow);
+}
+.row{
+  width:100%; display:flex; align-items:center; gap:12px;
+  padding:13px 14px; background:none; border:none; border-bottom:1px solid var(--border);
+  text-align:left; cursor:pointer;
+}
+.row:last-child{border-bottom:none}
+.row:active{background:var(--surface-2)}
+.row-num{
+  flex:0 0 auto; width:26px; height:26px; border-radius:50%;
+  background:var(--surface-2); color:var(--muted);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:500;
+}
+.row-text{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:2px}
+.row-title{font-size:15.5px; font-weight:600; color:var(--ink)}
+.row-sub{font-size:13px; color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.row-check{flex:0 0 auto; color:var(--accent); font-size:15px}
+.row-chev{flex:0 0 auto; color:var(--border); font-size:20px; font-weight:400}
+
+footer.pagefoot{
+  max-width:720px; margin:34px 0 60px; color:var(--muted); font-size:13px;
+}
+
+/* ================= READER VIEW ================= */
+#view-reader{
+  position:fixed; inset:0; background:var(--bg); z-index:30;
+  display:flex; flex-direction:column; height:100%;
+}
+.readerbar{
+  flex:0 0 auto; display:flex; align-items:center; gap:10px;
+  padding:calc(env(safe-area-inset-top, 0px) + 10px) max(14px, env(safe-area-inset-right, 0px)) 10px max(14px, env(safe-area-inset-left, 0px));
+  border-bottom:1px solid var(--border); background:var(--surface);
+}
+.readerbar .backbtn{
+  flex:0 0 auto; background:none; border:none; cursor:pointer;
+  display:flex; align-items:center; gap:4px; color:var(--accent-ink);
+  font-size:15px; font-weight:600; padding:6px 4px 6px 0;
+}
+.readerbar .backbtn .chev{font-size:20px; line-height:1}
+.readerbar .counter{
+  margin-left:auto; flex:0 0 auto; font-family:'IBM Plex Mono', monospace;
+  font-size:12.5px; color:var(--muted);
+}
+
+#reader-scroll{
+  flex:1 1 auto; overflow-y:auto; -webkit-overflow-scrolling:touch;
+  padding:0 max(16px, env(safe-area-inset-left, 0px)) 110px max(16px, env(safe-area-inset-right, 0px));
+}
+.readermain{max-width:680px; margin:0 auto; padding:26px 0 20px}
+.panel-title{font-size:clamp(23px,5vw,30px); margin:0 0 18px}
+.panel h2{font-size:19px; margin:32px 0 12px; padding-top:4px; border-top:1px solid var(--border)}
+.panel h2:first-of-type{border-top:none; margin-top:6px}
 .panel h3{font-size:15.5px; margin:20px 0 8px; color:var(--accent-ink)}
 .panel p{margin:0 0 14px; max-width:68ch}
 .panel ul, .panel ol{margin:0 0 16px; padding-left:1.3em}
@@ -156,92 +182,116 @@ code{
   font-size:.92em; background:var(--surface-2); padding:.1em .35em; border-radius:4px;
 }
 pre{
-  background:var(--code-bg); color:var(--code-ink);
-  border-radius:10px; padding:14px 16px; overflow-x:auto;
-  font-family:'IBM Plex Mono', monospace; font-size:13px; line-height:1.5;
+  background:var(--code-bg); color:var(--code-ink); border-radius:10px; padding:14px 16px;
+  overflow-x:auto; font-family:'IBM Plex Mono', monospace; font-size:13px; line-height:1.5;
   max-width:100%;
 }
 pre code{background:none; padding:0; color:inherit}
-
 .tablewrap{overflow-x:auto; margin:0 0 18px; border:1px solid var(--border); border-radius:10px}
 table{border-collapse:collapse; width:100%; min-width:460px; font-size:14px}
 th,td{padding:8px 12px; text-align:left; border-bottom:1px solid var(--border); vertical-align:top}
-thead th{background:var(--surface-2); font-family:'IBM Plex Sans'; font-weight:600; white-space:nowrap}
+thead th{background:var(--surface-2); font-weight:600; white-space:nowrap}
 tbody tr:last-child td{border-bottom:none}
 td, th{min-width:0}
-
-/* ---- figures ---- */
-.fig{
-  margin:22px 0; padding:16px;
-  background:var(--surface); border:1px solid var(--border); border-radius:12px;
-}
+.fig{margin:22px 0; padding:16px; background:var(--surface); border:1px solid var(--border); border-radius:12px}
 .fig-svg{overflow-x:auto}
 .fig-svg svg{display:block; margin:0 auto; max-width:100%; height:auto; min-width:260px}
 .fig figcaption{margin-top:10px}
 .fig figcaption .cap{display:block; font-size:13.5px; color:var(--muted); font-style:italic}
-
-/* ---- self-check answers ---- */
-details.answers{
-  margin:14px 0 20px; border:1px solid var(--border); border-radius:10px;
-  background:var(--surface-2); padding:4px 16px;
-}
-details.answers summary{
-  cursor:pointer; font-weight:600; padding:10px 0; color:var(--accent-ink);
-  font-family:'IBM Plex Sans';
-}
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0}
+details.answers{margin:14px 0 20px; border:1px solid var(--border); border-radius:10px; background:var(--surface-2); padding:4px 16px}
+details.answers summary{cursor:pointer; font-weight:600; padding:10px 0; color:var(--accent-ink)}
 details.answers[open] summary{margin-bottom:4px}
 details.answers ol, details.answers ul{margin-top:0}
-
-/* ---- glossary ---- */
 #panel-glossary ul{list-style:none; padding-left:0}
-#panel-glossary li{
-  padding:10px 0; border-bottom:1px solid var(--border); max-width:none;
-}
+#panel-glossary li{padding:10px 0; border-bottom:1px solid var(--border); max-width:none}
 #panel-glossary li:last-child{border-bottom:none}
 
-footer.pagefoot{
-  max-width:720px; margin:0 auto; padding:0 0 60px;
-  color:var(--muted); font-size:13px;
+.readernav{
+  position:fixed; left:0; right:0; bottom:0; z-index:31;
+  display:flex; gap:10px; align-items:center; justify-content:center;
+  padding:10px max(16px, env(safe-area-inset-left, 0px)) calc(env(safe-area-inset-bottom, 0px) + 12px) max(16px, env(safe-area-inset-right, 0px));
+  background:linear-gradient(to top, var(--bg) 60%, transparent);
+  pointer-events:none;
+}
+.readernav .navbtn, .readernav .contentsbtn{
+  pointer-events:auto; border:1px solid var(--border); background:var(--surface);
+  box-shadow:var(--shadow); cursor:pointer; color:var(--ink);
+}
+.readernav .navbtn{
+  width:42px; height:42px; border-radius:50%; font-size:18px;
+  display:flex; align-items:center; justify-content:center;
+}
+.readernav .navbtn:disabled{opacity:.35; cursor:default}
+.readernav .contentsbtn{
+  flex:0 0 auto; border-radius:999px; padding:0 18px; height:42px;
+  font-size:13.5px; font-weight:600; color:var(--accent-ink);
+  display:flex; align-items:center; gap:6px;
 }
 
 @media (max-width:600px){
-  .masthead{padding:20px 0 12px}
-  main{padding:20px 0 70px}
+  .readermain{padding:20px 0 16px}
   .fig{padding:12px}
 }
 </style>
 
-<div class="masthead">
-  <p class="kicker">Aalto University &middot; Molecular Biotechnology lab</p>
-  <h1>MALDI-TOF Illustrated Guide</h1>
-  <p>A beginner-friendly companion to the full MALDI-TOF Study Guide, built around the real Bruker UltrafleXtreme MALDI-TOF/TOF instrument in this lab. Twenty tabs: a welcome tab, the seventeen topics of the full guide in the same order, a set of real-data practice scenarios, and a glossary.</p>
-</div>
-<div class="tabbar-wrap">
-  <div class="tabbar" role="tablist" aria-label="Guide topics">
-<button class="tab" role="tab" id="tabbtn-t00" aria-controls="panel-t00" aria-selected="false" tabindex="-1" data-tab="t00">Welcome</button>
-<button class="tab" role="tab" id="tabbtn-t01" aria-controls="panel-t01" aria-selected="false" tabindex="-1" data-tab="t01">1. Overview</button>
-<button class="tab" role="tab" id="tabbtn-t02" aria-controls="panel-t02" aria-selected="false" tabindex="-1" data-tab="t02">2. Mechanism</button>
-<button class="tab" role="tab" id="tabbtn-t03" aria-controls="panel-t03" aria-selected="false" tabindex="-1" data-tab="t03">3. Sample Prep</button>
-<button class="tab" role="tab" id="tabbtn-t04" aria-controls="panel-t04" aria-selected="false" tabindex="-1" data-tab="t04">4. Spectrum</button>
-<button class="tab" role="tab" id="tabbtn-t05" aria-controls="panel-t05" aria-selected="false" tabindex="-1" data-tab="t05">5. Errors</button>
-<button class="tab" role="tab" id="tabbtn-t06" aria-controls="panel-t06" aria-selected="false" tabindex="-1" data-tab="t06">6. Case: PMF</button>
-<button class="tab" role="tab" id="tabbtn-t07" aria-controls="panel-t07" aria-selected="false" tabindex="-1" data-tab="t07">7. ISD</button>
-<button class="tab" role="tab" id="tabbtn-t08" aria-controls="panel-t08" aria-selected="false" tabindex="-1" data-tab="t08">8. Glycopeptides</button>
-<button class="tab" role="tab" id="tabbtn-t09" aria-controls="panel-t09" aria-selected="false" tabindex="-1" data-tab="t09">9. PTMs</button>
-<button class="tab" role="tab" id="tabbtn-t10" aria-controls="panel-t10" aria-selected="false" tabindex="-1" data-tab="t10">10. LC-MALDI</button>
-<button class="tab" role="tab" id="tabbtn-t11" aria-controls="panel-t11" aria-selected="false" tabindex="-1" data-tab="t11">11. Other Apps</button>
-<button class="tab" role="tab" id="tabbtn-t12" aria-controls="panel-t12" aria-selected="false" tabindex="-1" data-tab="t12">12. Other Organisms</button>
-<button class="tab" role="tab" id="tabbtn-t13" aria-controls="panel-t13" aria-selected="false" tabindex="-1" data-tab="t13">13. Alt Methods</button>
-<button class="tab" role="tab" id="tabbtn-t14" aria-controls="panel-t14" aria-selected="false" tabindex="-1" data-tab="t14">14. More Examples</button>
-<button class="tab" role="tab" id="tabbtn-t15" aria-controls="panel-t15" aria-selected="false" tabindex="-1" data-tab="t15">15. R &amp; Python</button>
-<button class="tab" role="tab" id="tabbtn-t16" aria-controls="panel-t16" aria-selected="false" tabindex="-1" data-tab="t16">16. Cheat Sheet</button>
-<button class="tab" role="tab" id="tabbtn-t17" aria-controls="panel-t17" aria-selected="false" tabindex="-1" data-tab="t17">17. Test Yourself</button>
-<button class="tab" role="tab" id="tabbtn-t18" aria-controls="panel-t18" aria-selected="false" tabindex="-1" data-tab="t18">18. Practice Scenarios</button>
-<button class="tab" role="tab" id="tabbtn-glossary" aria-controls="panel-glossary" aria-selected="false" tabindex="-1" data-tab="glossary">Glossary</button>
+<div id="view-library">
+  <div class="libtop">
+    <p class="kicker">Aalto University &middot; Molecular Biotechnology lab</p>
+    <h1>MALDI-TOF Guide</h1>
+    <p>The illustrated companion guide, as an app you can keep on your home screen. Twenty chapters, built around the real Bruker UltrafleXtreme instrument in this lab.</p>
   </div>
+  <div class="install-tip" id="install-tip" hidden>
+    <span><strong>Install this guide.</strong> In Safari, tap Share, then "Add to Home Screen".</span>
+    <button type="button" id="install-tip-dismiss">Got it</button>
+  </div>
+<div class="group-label">Start here</div>
+<div class="group">
+<button class="row" type="button" data-chapter="t00"><span class="row-num">1</span><span class="row-text"><span class="row-title">Welcome: the golden thread</span><span class="row-sub">Five ideas that tie every tab together</span></span><span class="row-check" data-check="t00" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t01"><span class="row-num">2</span><span class="row-text"><span class="row-title">Overview &amp; How It Works</span><span class="row-sub">The six-step process, the equation, and why 1985 was the turning point</span></span><span class="row-check" data-check="t01" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+</div>
+<div class="group-label">Core skills</div>
+<div class="group">
+<button class="row" type="button" data-chapter="t02"><span class="row-num">3</span><span class="row-text"><span class="row-title">Mechanism Explained Simply</span><span class="row-sub">The matrix as an airbag, the time-of-flight race, and seven real matrices</span></span><span class="row-check" data-check="t02" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t03"><span class="row-num">4</span><span class="row-text"><span class="row-title">Sample Prep &amp; Instrument Setup</span><span class="row-sub">The 384-spot plate, the HCCA recipe, and the three calibration standards</span></span><span class="row-check" data-check="t03" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t04"><span class="row-num">5</span><span class="row-text"><span class="row-title">Reading a Spectrum</span><span class="row-sub">m/z versus mass, isotope patterns, and charge state</span></span><span class="row-check" data-check="t04" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t05"><span class="row-num">6</span><span class="row-text"><span class="row-title">Common Errors &amp; Troubleshooting</span><span class="row-sub">Crystal problems, laser power signs, and the no-hits checklist</span></span><span class="row-check" data-check="t05" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+</div>
+<div class="group-label">Case studies</div>
+<div class="group">
+<button class="row" type="button" data-chapter="t06"><span class="row-num">7</span><span class="row-text"><span class="row-title">Case Study: Protein Identification by PMF and MS/MS</span><span class="row-sub">A full protein ID run through ProteinScape, AutoXecute and MASCOT</span></span><span class="row-check" data-check="t06" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t07"><span class="row-num">8</span><span class="row-text"><span class="row-title">TOF/TOF, LIFT &amp; Intact Proteins (ISD)</span><span class="row-sub">Sequencing whole proteins without digesting them first</span></span><span class="row-check" data-check="t07" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t08"><span class="row-num">9</span><span class="row-text"><span class="row-title">Case Study: Glycopeptides</span><span class="row-sub">Classification, GlycoQuest, and reading a glycan spectrum</span></span><span class="row-check" data-check="t08" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t09"><span class="row-num">10</span><span class="row-text"><span class="row-title">Proteomics and PTMs</span><span class="row-sub">A phosphorylation workflow from Sesilja Aranko&#x27;s research group</span></span><span class="row-check" data-check="t09" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+</div>
+<div class="group-label">Beyond this lab</div>
+<div class="group">
+<button class="row" type="button" data-chapter="t10"><span class="row-num">11</span><span class="row-text"><span class="row-title">LC-MALDI and Automated Pipelines</span><span class="row-sub">Coupling liquid chromatography to the plate</span></span><span class="row-check" data-check="t10" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t11"><span class="row-num">12</span><span class="row-text"><span class="row-title">Other Applications Beyond This Lab</span><span class="row-sub">Where MALDI-TOF shows up outside protein identification</span></span><span class="row-check" data-check="t11" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t12"><span class="row-num">13</span><span class="row-text"><span class="row-title">Beyond This Lab, Continued: Other Organisms</span><span class="row-sub">Bacterial identification and other organisms</span></span><span class="row-check" data-check="t12" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t13"><span class="row-num">14</span><span class="row-text"><span class="row-title">Alternative Methods &amp; Future Trends</span><span class="row-sub">How MALDI-TOF compares to other methods, and what&#x27;s next</span></span><span class="row-check" data-check="t13" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+</div>
+<div class="group-label">Reference</div>
+<div class="group">
+<button class="row" type="button" data-chapter="t14"><span class="row-num">15</span><span class="row-text"><span class="row-title">More Worked Examples</span><span class="row-sub">Extra practice problems with real numbers</span></span><span class="row-check" data-check="t14" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t15"><span class="row-num">16</span><span class="row-text"><span class="row-title">Analyzing with R &amp; Python</span><span class="row-sub">Scripting spectra analysis outside the Bruker software</span></span><span class="row-check" data-check="t15" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t16"><span class="row-num">17</span><span class="row-text"><span class="row-title">Cheat Sheet &amp; Further Reading</span><span class="row-sub">A one-page reference and source list</span></span><span class="row-check" data-check="t16" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t17"><span class="row-num">18</span><span class="row-text"><span class="row-title">Test Your Knowledge</span><span class="row-sub">Self-check questions across the whole guide</span></span><span class="row-check" data-check="t17" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="t18"><span class="row-num">19</span><span class="row-text"><span class="row-title">Practice Scenarios: Real Studies to Work Through</span><span class="row-sub">Ten real published studies to work through yourself</span></span><span class="row-check" data-check="t18" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+<button class="row" type="button" data-chapter="glossary"><span class="row-num">20</span><span class="row-text"><span class="row-title">Glossary</span><span class="row-sub">Every term introduced, in one alphabetised list</span></span><span class="row-check" data-check="glossary" hidden>&#10003;</span><span class="row-chev">&#8250;</span></button>
+</div>
+  <footer class="pagefoot">
+    <p>Based on the 17-tab "MALDI-TOF Study Guide" built for this lab, plus a welcome tab and glossary. Facts, numbers and worked examples throughout are drawn from that guide's real content; nothing here is invented or rounded.</p>
+  </footer>
 </div>
 
-<main>
+<div id="view-reader" hidden>
+  <div class="readerbar">
+    <button type="button" class="backbtn" id="reader-back"><span class="chev">&#8249;</span>Chapters</button>
+    <span class="counter" id="reader-counter"></span>
+  </div>
+  <div id="reader-scroll">
+    <div class="readermain">
 <section class="panel" role="tabpanel" id="panel-t00" aria-labelledby="tabbtn-t00" hidden><h1 class="panel-title">Welcome: the golden thread</h1><h2>Why this guide exists</h2>
 <p>This is an illustrated, beginner-friendly companion to the full "MALDI-TOF Study Guide," built around the real Bruker UltrafleXtreme MALDI-TOF/TOF instrument in Aalto University's Molecular Biotechnology lab. It mirrors all 17 topics of that guide, but slows down, adds a figure to every topic, and keeps technical terms paired with a plain-language explanation the first time they appear. It is written for a bachelor's student who has never touched a mass spectrometer before.</p>
 <p>Seventeen tabs can feel like a lot of separate facts. They are not. Underneath all of them sit the same five ideas, repeated in a new setting each time. Spotting them as you move through the guide will make every later tab feel like a variation on something you already understand, rather than a new subject.</p>
@@ -1264,13 +1314,14 @@ footer.pagefoot{
 <p>A real phosphopeptide study using MALDI-TOF worked with peptides in the 1,100 to 2,400 Da range and confirmed that the clean +80 Da rule held across every phosphorylated serine, threonine, and tyrosine peptide tested, whether the sample was a synthetic standard or a real protein digest.</p>
 <h3>Enriching and confirming phosphorylation</h3>
 <p>Phosphorylation is common but tricky to see directly, because phosphopeptides are usually rare in a digest and ionize poorly in positive-ion mode (the phosphate group's negative charge works against picking up the proton MALDI needs to detect it). The workflow below exists specifically to work around that:</p>
-<pre class="mermaid">flowchart LR
-    A["Digest protein&lt;br/&gt;(trypsin)"] --&gt; B["Enrich phosphopeptides&lt;br/&gt;(IMAC or TiO2/ZrO2 beads)"]
-    B --&gt; C["MALDI-TOF: look for&lt;br/&gt;a +80 Da mass shift"]
-    C --&gt; D["Fragment the peptide&lt;br/&gt;(reflector-mode PSD or CID)"]
-    D --&gt; E{"Dominant peak =&lt;br/&gt;precursor - 98 Da?"}
-    E -- yes --&gt; F["Confirms phosphorylation,&lt;br/&gt;but backbone fragments are weak"]
-    E -- no --&gt; G["May be phosphotyrosine&lt;br/&gt;(more stable, fragments normally)"]</pre>
+<pre><code class="language-mermaid">flowchart LR
+    A[&quot;Digest protein&lt;br/&gt;(trypsin)&quot;] --&gt; B[&quot;Enrich phosphopeptides&lt;br/&gt;(IMAC or TiO2/ZrO2 beads)&quot;]
+    B --&gt; C[&quot;MALDI-TOF: look for&lt;br/&gt;a +80 Da mass shift&quot;]
+    C --&gt; D[&quot;Fragment the peptide&lt;br/&gt;(reflector-mode PSD or CID)&quot;]
+    D --&gt; E{&quot;Dominant peak =&lt;br/&gt;precursor - 98 Da?&quot;}
+    E -- yes --&gt; F[&quot;Confirms phosphorylation,&lt;br/&gt;but backbone fragments are weak&quot;]
+    E -- no --&gt; G[&quot;May be phosphotyrosine&lt;br/&gt;(more stable, fragments normally)&quot;]
+</code></pre>
 <p>Enrichment comes first, always: IMAC resin or titanium/zirconium dioxide beads selectively grab phosphopeptides out of a digest, because unmodified peptides would otherwise drown out the weak phosphopeptide signal. Then the search looks for the +80 Da mass shift, since a phosphate group (HPO3) adds almost exactly 80 Da (79.9663 Da, to be precise) per phosphorylated residue. Fragmenting the peptide to find exactly which residue carries the phosphate comes with a catch: phosphoserine and phosphothreonine are chemically fragile under standard fragmentation and tend to lose the whole phosphate group as neutral H3PO4, a 98 Da drop, before the backbone itself breaks apart. That loss is a great confirmation signal but a poor localization tool, since it dominates the spectrum and starves out the very fragments that would reveal the exact residue. Phosphotyrosine does not have this problem; it is more chemically stable and fragments normally.</p>
 <h2>Worked example</h2>
 <p>This is the central worked example of this tab, reused from elsewhere in this guide: the peptide FQSEEQQQTEDELQDK, from beta casein (a real milk protein). Its unmodified, calculated mass is MH+ 1981.8 Da. The phosphorylated form, FQpSEEQQQTEDELQDK (the lowercase p marks the phosphate, sitting on the serine), comes in at MH+ 2061.8 Da.</p>
@@ -2882,149 +2933,155 @@ print(f&quot;{matched.sum()} of {len(reference)} reference peaks matched ({score
 <p><strong>Trypsin:</strong> an enzyme that reliably cuts a protein chain right after every lysine or arginine, used to produce measurable peptides. (Proteomics and PTMs)</p>
 <p><strong>WARP-LC:</strong> the automated software that manages an LC-MALDI run, tracking peptides across spots and scheduling MS/MS. (LC-MALDI)</p>
 <p><strong>ZipTip:</strong> a small pipette-tip device (commonly C18) used to desalt or clean up a sample before trying MALDI again. (Sample Prep; Errors)</p></section>
-</main>
-<footer class="pagefoot">
-  <p>Based on the 17-tab "MALDI-TOF Study Guide" built for this lab. Facts, numbers and worked examples throughout are drawn from that guide's real content; nothing here is invented or rounded.</p>
-</footer>
+    </div>
+  </div>
+  <div class="readernav">
+    <button type="button" class="navbtn" id="reader-prev" aria-label="Previous chapter">&#8249;</button>
+    <button type="button" class="contentsbtn" id="reader-contents">&#9776; Contents</button>
+    <button type="button" class="navbtn" id="reader-next" aria-label="Next chapter">&#8250;</button>
+  </div>
+</div>
 
 <script>
 (function(){
-  var tabbar = document.querySelector('.tabbar');
-  var buttons = Array.prototype.slice.call(document.querySelectorAll('.tab'));
-  var ids = buttons.map(function(b){ return b.getAttribute('data-tab'); });
+  var ORDER = ['t00','t01','t02','t03','t04','t05','t06','t07','t08','t09','t10','t11','t12','t13','t14','t15','t16','t17','t18','glossary'];
+  var libraryView = document.getElementById('view-library');
+  var readerView = document.getElementById('view-reader');
+  var readerScroll = document.getElementById('reader-scroll');
+  var counterEl = document.getElementById('reader-counter');
+  var prevBtn = document.getElementById('reader-prev');
+  var nextBtn = document.getElementById('reader-next');
 
-  function activate(id, opts){
-    opts = opts || {};
-    if(ids.indexOf(id) === -1){ id = ids[0]; }
-    buttons.forEach(function(b){
-      var on = b.getAttribute('data-tab') === id;
-      b.setAttribute('aria-selected', on ? 'true' : 'false');
-      b.tabIndex = on ? 0 : -1;
-      var panel = document.getElementById('panel-' + b.getAttribute('data-tab'));
-      if(panel){ panel.hidden = !on; }
+  var READ_KEY = 'maldi-guide-read';
+  function getRead(){
+    try{ return JSON.parse(localStorage.getItem(READ_KEY) || '[]'); }catch(e){ return []; }
+  }
+  function markRead(id){
+    try{
+      var read = getRead();
+      if(read.indexOf(id) === -1){
+        read.push(id);
+        localStorage.setItem(READ_KEY, JSON.stringify(read));
+      }
+      var mark = document.querySelector('[data-check="' + id + '"]');
+      if(mark){ mark.hidden = false; }
+    }catch(e){}
+  }
+  (function paintReadMarks(){
+    var read = getRead();
+    read.forEach(function(id){
+      var mark = document.querySelector('[data-check="' + id + '"]');
+      if(mark){ mark.hidden = false; }
     });
-    if(opts.moveFocus){
-      var btn = document.getElementById('tabbtn-' + id);
-      if(btn){ btn.focus(); }
-    }
-    if(opts.updateHash){
+  })();
+
+  var currentIndex = -1;
+
+  function showPanel(id){
+    document.querySelectorAll('.panel').forEach(function(p){
+      p.hidden = (p.id !== 'panel-' + id);
+    });
+  }
+
+  function openReader(id, opts){
+    opts = opts || {};
+    var idx = ORDER.indexOf(id);
+    if(idx === -1){ idx = 0; id = ORDER[0]; }
+    currentIndex = idx;
+    showPanel(id);
+    counterEl.textContent = (idx + 1) + ' of ' + ORDER.length;
+    prevBtn.disabled = idx === 0;
+    nextBtn.disabled = idx === ORDER.length - 1;
+    libraryView.hidden = true;
+    readerView.hidden = false;
+    if(!opts.keepScroll){ readerScroll.scrollTop = 0; }
+    markRead(id);
+    if(opts.updateHash !== false){
       try{ history.replaceState(null, '', '#' + id); }catch(e){}
-    }
-    var activeBtn = document.getElementById('tabbtn-' + id);
-    if(activeBtn && activeBtn.scrollIntoView){
-      activeBtn.scrollIntoView({block:'nearest', inline:'nearest'});
-    }
-    if(opts.scrollTop){
-      window.scrollTo({top:0, behavior:'smooth'});
     }
   }
 
-  buttons.forEach(function(b){
-    b.addEventListener('click', function(){
-      activate(b.getAttribute('data-tab'), {updateHash:true, scrollTop:true});
+  function closeReader(){
+    readerView.hidden = true;
+    libraryView.hidden = false;
+    try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){}
+  }
+
+  function step(delta){
+    var next = currentIndex + delta;
+    if(next < 0 || next >= ORDER.length){ return; }
+    openReader(ORDER[next]);
+  }
+
+  document.querySelectorAll('.row[data-chapter]').forEach(function(row){
+    row.addEventListener('click', function(){
+      openReader(row.getAttribute('data-chapter'), {updateHash:true});
     });
   });
 
-  tabbar.addEventListener('keydown', function(e){
-    var current = buttons.findIndex(function(b){ return b.getAttribute('aria-selected') === 'true'; });
-    var next = null;
-    if(e.key === 'ArrowRight'){ next = (current + 1) % buttons.length; }
-    else if(e.key === 'ArrowLeft'){ next = (current - 1 + buttons.length) % buttons.length; }
-    else if(e.key === 'Home'){ next = 0; }
-    else if(e.key === 'End'){ next = buttons.length - 1; }
-    if(next !== null){
-      e.preventDefault();
-      activate(ids[next], {moveFocus:true, updateHash:true});
-    }
+  document.getElementById('reader-back').addEventListener('click', closeReader);
+  document.getElementById('reader-contents').addEventListener('click', closeReader);
+  prevBtn.addEventListener('click', function(){ step(-1); });
+  nextBtn.addEventListener('click', function(){ step(1); });
+
+  document.addEventListener('keydown', function(e){
+    if(readerView.hidden) return;
+    if(e.key === 'ArrowRight'){ step(1); }
+    else if(e.key === 'ArrowLeft'){ step(-1); }
+    else if(e.key === 'Escape'){ closeReader(); }
   });
+
+  // swipe left/right between chapters
+  var touchStartX = null, touchStartY = null;
+  readerScroll.addEventListener('touchstart', function(e){
+    var t = e.changedTouches[0];
+    touchStartX = t.clientX; touchStartY = t.clientY;
+  }, {passive:true});
+  readerScroll.addEventListener('touchend', function(e){
+    if(touchStartX === null) return;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - touchStartX, dy = t.clientY - touchStartY;
+    touchStartX = null;
+    if(Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5){
+      if(dx < 0){ step(1); } else { step(-1); }
+    }
+  }, {passive:true});
 
   window.addEventListener('hashchange', function(){
     var id = location.hash.replace('#','');
-    activate(id, {scrollTop:true});
+    if(id && ORDER.indexOf(id) !== -1){ openReader(id, {updateHash:false}); }
+    else{ closeReader(); }
   });
 
-  var startId = location.hash ? location.hash.replace('#','') : ids[0];
-  activate(startId, {});
+  // install tip: only on iOS Safari, not already installed, not dismissed before
+  (function(){
+    try{
+      var standalone = window.navigator.standalone === true ||
+        window.matchMedia('(display-mode: standalone)').matches;
+      var dismissed = localStorage.getItem('maldi-guide-install-dismissed') === '1';
+      var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+      var tip = document.getElementById('install-tip');
+      if(isIOS && !standalone && !dismissed && tip){
+        tip.hidden = false;
+      }
+      var dismissBtn = document.getElementById('install-tip-dismiss');
+      if(dismissBtn){
+        dismissBtn.addEventListener('click', function(){
+          document.getElementById('install-tip').hidden = true;
+          try{ localStorage.setItem('maldi-guide-install-dismissed', '1'); }catch(e){}
+        });
+      }
+    }catch(e){}
+  })();
+
+  // initial route
+  var startHash = location.hash ? location.hash.replace('#','') : '';
+  if(startHash && ORDER.indexOf(startHash) !== -1){
+    openReader(startHash, {updateHash:false});
+  }
 })();
 </script>
 
-
-<!--claude-mermaid-runtime-begin:3477-->
-<style>.mermaid-diagram{margin-block:4px}.mermaid-diagram svg{display:block;margin:0 auto;max-width:100%;height:auto}</style>
-<script src="/_runtime/mermaid-11.16.1.min.js"></script>
-<script>(function(){
-var CFG={"palettes":{"light":{"surface":"#f4efe4","text":"#42392e","line":"#8a7f6d","border":"#7a6c52","bg":"#fffdf8"},"dark":{"surface":"#262b34","text":"#f2f3f5","line":"#a8adb8","border":"#9aa4b8","bg":"#1f232b"}}};
-if(typeof mermaid==='undefined')return;
-var pres=Array.prototype.slice.call(document.querySelectorAll('pre.mermaid')).filter(function(p){if(p.hasAttribute('data-claude-mermaid-claimed'))return false;p.setAttribute('data-claude-mermaid-claimed','1');return true;});
-if(!pres.length)return;
-var mq=window.matchMedia?window.matchMedia('(prefers-color-scheme: dark)'):null;
-var root=document.documentElement;
-var items=pres.map(function(pre){
-var mount=document.createElement('div');mount.className='mermaid-diagram';
-return {pre:pre,mount:mount,src:pre.textContent||''};
-});
-var seq=0;
-var renderGen=0;
-var lastKey='';
-function pageBg(fallback){
-var els=[document.body,document.documentElement];
-for(var i=0;i<els.length;i++){
-var c=els[i]&&getComputedStyle(els[i]).backgroundColor;
-if(c&&c!=='transparent'&&c!=='rgba(0, 0, 0, 0)')return c;
-}
-return fallback;
-}
-function render(){
-var theme=root.getAttribute('data-theme');
-var dark=theme==='dark'||(!!(mq&&mq.matches)&&theme!=='light');
-var pal=dark?CFG.palettes.dark:CFG.palettes.light;
-var bg=pageBg(pal.bg);
-var key=(dark?'d':'l')+'|'+bg;
-if(key===lastKey)return;
-lastKey=key;
-var gen=++renderGen;
-var font=getComputedStyle(document.body).fontFamily||'sans-serif';
-var nat={useMaxWidth:false};
-mermaid.initialize({
-startOnLoad:false,securityLevel:'strict',theme:'base',
-flowchart:nat,sequence:nat,er:nat,state:nat,class:nat,pie:nat,
-gantt:nat,journey:nat,timeline:nat,gitGraph:nat,mindmap:nat,xyChart:nat,
-quadrantChart:nat,sankey:nat,c4:nat,requirement:nat,block:nat,
-packet:nat,kanban:nat,architecture:nat,radar:nat,
-themeVariables:{background:bg,mainBkg:pal.surface,primaryColor:pal.surface,
-primaryTextColor:pal.text,lineColor:pal.line,primaryBorderColor:pal.border,
-nodeBorder:pal.border,clusterBorder:pal.border,edgeLabelBackground:bg,
-clusterBkg:'rgba(127,127,127,0.07)',titleColor:pal.text,
-darkMode:dark,rowOdd:bg,rowEven:'rgba(127,127,127,0.07)',
-attributeBackgroundColorOdd:bg,attributeBackgroundColorEven:'rgba(127,127,127,0.07)',
-fontSize:'16px',fontFamily:font},
-themeCSS:'.node rect, .node circle, .node polygon, .node path, .cluster rect { stroke-width: 2px; }'
-});
-items.forEach(function(it){
-var id='claude-mermaid-'+seq++;
-mermaid.render(id,it.src).then(function(r){
-if(gen!==renderGen)return;
-var prev=it.pre.previousElementSibling;
-if(prev&&prev.className==='mermaid-diagram'&&prev!==it.mount)return;
-it.mount.innerHTML=r.svg;
-if(!it.mount.parentNode)it.pre.parentNode.insertBefore(it.mount,it.pre);
-it.pre.style.display='none';
-},function(){
-var scratch=document.getElementById(id);
-if(scratch)scratch.parentNode.removeChild(scratch);
-scratch=document.getElementById('d'+id);
-if(scratch)scratch.parentNode.removeChild(scratch);
-if(gen!==renderGen)return;
-if(it.mount.parentNode)it.mount.parentNode.removeChild(it.mount);
-it.pre.style.display='';
-});
-});
-}
-render();
-if(mq&&mq.addEventListener)mq.addEventListener('change',render);
-if(typeof MutationObserver!=='undefined')new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
-})();</script>
-<!--claude-mermaid-runtime-end-->
 
 <!--claude-hljs-runtime-begin:605887-->
 <script>// Generated by scripts/generate-hljs-browser-bundle.ts — do not edit by hand.
