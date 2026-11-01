@@ -3,7 +3,7 @@
 A study guide for MALDI-TOF/TOF mass spectrometry, built around the real Bruker UltrafleXtreme MALDI-TOF/TOF instrument at Aalto University's Molecular Biotechnology lab. It is written for bachelor's and master's students who have never used the instrument before, and it stays grounded in facts, numbers, and worked examples drawn from the lab's own real workflow and from real published sources, never invented or rounded.
 
 ## What is in this repository
-
+--
 - **`illustrated-guide/`**: the illustrated, beginner-friendly version of the guide, as both a single HTML page (`MALDI-TOF-Illustrated-Guide.html`) and its source content as twenty numbered Markdown files, one per tab (welcome, the seventeen core topics, a set of real-data practice scenarios, and a glossary).
 - **`app/`**: a mobile-friendly, installable (Add to Home Screen) version of the same illustrated guide, as a single HTML page (`MALDI-TOF-Guide-App.html`).
 - **`browser-version/`**: an earlier browser-based export of the full study guide.
