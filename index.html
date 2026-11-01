@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MALDI-TOF Study Guide</title>
+<style>
+  :root{
+    --bg:#f4f5f7; --panel:#ffffff; --ink:#1c1f26; --muted:#6b7280;
+    --accent:#2f6fed; --accent-soft:#eaf0ff; --border:#e3e6eb;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--ink); display:flex; min-height:100vh;
+  }
+  nav{
+    width:280px; flex-shrink:0; background:var(--panel); border-right:1px solid var(--border);
+    position:sticky; top:0; height:100vh; overflow-y:auto; padding:20px 0;
+  }
+  nav .brand{
+    padding:0 20px 16px 20px; border-bottom:1px solid var(--border); margin-bottom:12px;
+  }
+  nav .brand h1{font-size:16px; margin:0 0 4px 0; line-height:1.3;}
+  nav .brand p{font-size:12px; color:var(--muted); margin:0;}
+  nav ul{list-style:none; margin:0; padding:0;}
+  nav li a{
+    display:block; padding:10px 20px; font-size:13.5px; color:var(--ink); text-decoration:none;
+    border-left:3px solid transparent; line-height:1.35;
+  }
+  nav li a:hover{background:var(--accent-soft);}
+  nav li a.active{border-left-color:var(--accent); background:var(--accent-soft); color:var(--accent); font-weight:600;}
+  nav li .num{color:var(--muted); font-weight:400; margin-right:6px;}
+  main{flex:1; padding:36px 20px 80px; display:flex; flex-direction:column; align-items:center;}
+  .note{
+    max-width:900px; width:100%; background:#fff8e1; border:1px solid #f0e0a8; color:#6b5900;
+    font-size:13px; padding:12px 16px; border-radius:8px; margin-bottom:28px; line-height:1.5;
+  }
+  .page{
+    max-width:900px; width:100%; background:var(--panel); margin-bottom:22px;
+    box-shadow:0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    border-radius:6px; overflow:hidden;
+  }
+  .page img{display:block; width:100%; height:auto;}
+  .section-anchor{scroll-margin-top:20px;}
+  footer{max-width:900px; width:100%; text-align:center; color:var(--muted); font-size:12px; padding-top:12px;}
+  @media (max-width: 780px){
+    body{flex-direction:column;}
+    nav{width:100%; height:auto; position:relative; border-right:none; border-bottom:1px solid var(--border);}
+  }
+  @media print{
+    nav{display:none;}
+    .note{display:none;}
+    body{display:block;}
+    .page{box-shadow:none; margin-bottom:0; page-break-after:always;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand">
+    <h1>MALDI-TOF Study Guide</h1>
+    <p>A hands-on guide built from your own MALDI-TOF papers and protocols</p>
+  </div>
+  <ul id="navlist">
+    <li><a href="#s1" data-target="s1"><span class="num">1</span>Overview &amp; How It Works</a></li>
+    <li><a href="#s2" data-target="s2"><span class="num">2</span>Mechanism Explained Simply</a></li>
+    <li><a href="#s3" data-target="s3"><span class="num">3</span>Sample Prep &amp; Instrument Setup</a></li>
+    <li><a href="#s4" data-target="s4"><span class="num">4</span>Reading a Spectrum</a></li>
+    <li><a href="#s5" data-target="s5"><span class="num">5</span>Common Errors &amp; Troubleshooting</a></li>
+    <li><a href="#s6" data-target="s6"><span class="num">6</span>Case Study: Protein Identification by PMF and MS/MS</a></li>
+    <li><a href="#s7" data-target="s7"><span class="num">7</span>TOF/TOF, LIFT &amp; Intact Proteins (ISD)</a></li>
+    <li><a href="#s8" data-target="s8"><span class="num">8</span>Case Study: Glycopeptides</a></li>
+    <li><a href="#s9" data-target="s9"><span class="num">9</span>Proteomics and PTMs</a></li>
+    <li><a href="#s10" data-target="s10"><span class="num">10</span>LC-MALDI and Automated Pipelines</a></li>
+    <li><a href="#s11" data-target="s11"><span class="num">11</span>Other Applications Beyond This Lab</a></li>
+    <li><a href="#s12" data-target="s12"><span class="num">12</span>Beyond This Lab, Continued: Other Organisms</a></li>
+    <li><a href="#s13" data-target="s13"><span class="num">13</span>Alternative Methods &amp; Future Trends</a></li>
+    <li><a href="#s14" data-target="s14"><span class="num">14</span>More Worked Examples</a></li>
+    <li><a href="#s15" data-target="s15"><span class="num">15</span>Analyzing with R &amp; Python</a></li>
+    <li><a href="#s16" data-target="s16"><span class="num">16</span>Cheat Sheet &amp; Further Reading</a></li>
+    <li><a href="#s17" data-target="s17"><span class="num">17</span>Test Your Knowledge</a></li>
+  </ul>
+</nav>
+
+<main>
+  <div class="note">
+    This is a static, offline copy of the MALDI-TOF Study Guide (charts and diagrams saved as fixed images). It won't update itself and can't be edited here &mdash; the live, interactive version with editable widgets stays at its Claude Docs link.
+  </div>
+
+  <div id="pages"></div>
+
+  <footer>MALDI-TOF Study Guide &middot; built from your MALDI folder&rsquo;s papers and protocols</footer>
+</main>
+
+<script>
+  // section start page -> section id (1-indexed page numbers, 105 total pages)
+  const sections = [
+    {id:"s1", start:1,   end:8},
+    {id:"s2", start:9,   end:16},
+    {id:"s3", start:17,  end:21},
+    {id:"s4", start:22,  end:24},
+    {id:"s5", start:25,  end:28},
+    {id:"s6", start:29,  end:34},
+    {id:"s7", start:35,  end:38},
+    {id:"s8", start:39,  end:44},
+    {id:"s9", start:45,  end:58},
+    {id:"s10",start:59,  end:61},
+    {id:"s11",start:62,  end:65},
+    {id:"s12",start:66,  end:68},
+    {id:"s13",start:69,  end:81},
+    {id:"s14",start:82,  end:86},
+    {id:"s15",start:87,  end:92},
+    {id:"s16",start:93,  end:100},
+    {id:"s17",start:101, end:105}
+  ];
+  const totalPages = 105;
+  const container = document.getElementById("pages");
+
+  for (let p = 1; p <= totalPages; p++) {
+    const sec = sections.find(s => s.start === p);
+    if (sec) {
+      const anchor = document.createElement("div");
+      anchor.className = "section-anchor";
+      anchor.id = sec.id;
+      container.appendChild(anchor);
+    }
+    const num = String(p).padStart(3, "0");
+    const wrap = document.createElement("div");
+    wrap.className = "page";
+    wrap.innerHTML = '<img src="pages/page-' + num + '.png" alt="Page ' + p + '" loading="lazy">';
+    container.appendChild(wrap);
+  }
+
+  // highlight active nav item on scroll
+  const links = Array.from(document.querySelectorAll("#navlist a"));
+  const anchors = sections.map(s => document.getElementById(s.id));
+  function onScroll(){
+    let current = anchors[0];
+    for (const a of anchors) {
+      if (a.getBoundingClientRect().top - 80 <= 0) current = a;
+    }
+    links.forEach(l => l.classList.toggle("active", l.dataset.target === current.id));
+  }
+  document.addEventListener("scroll", onScroll, {passive:true});
+  onScroll();
+</script>
+
+</body>
+</html>
